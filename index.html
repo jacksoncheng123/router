@@ -4,32 +4,33 @@
   <title>Redirecting securely…</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
-    // Function to extract query parameters
     function getQueryParam(param) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(param);
     }
 
-    const encrypted = "U2FsdGVkX18Ezbqk2xvq16SsShgIOBXe70gPaWiZmPZ5Ggpg9aM5H2u+/MAO9SDPWCmNsTwdEuAJnV+BIZ376g==";
-    const passphrase = getQueryParam("key"); // URL: ?key=YOUR_SECRET_HERE
+    window.onload = function() {
+      const encrypted = "U2FsdGVkX18Ezbqk2xvq16SsShgIOBXe70gPaWiZmPZ5Ggpg9aM5H2u+/MAO9SDPWCmNsTwdEuAJnV+BIZ376g==";
+      const passphrase = getQueryParam("key");
 
-    if (passphrase) {
-      try {
-        const decrypted = CryptoJS.AES.decrypt(encrypted, passphrase).toString(CryptoJS.enc.Utf8);
-        if (decrypted) {
-          window.location.href = decrypted;
-        } else {
-          document.write("🔒 Decryption failed. Invalid key or tampered URL.");
+      if (passphrase) {
+        try {
+          const decrypted = CryptoJS.AES.decrypt(encrypted, passphrase).toString(CryptoJS.enc.Utf8);
+          if (decrypted && decrypted.startsWith("http")) {
+            window.location.href = decrypted;
+          } else {
+            document.getElementById("message").textContent = "🔒 Decryption failed. Invalid key or tampered URL.";
+          }
+        } catch (e) {
+          document.getElementById("message").textContent = "⚠️ Decryption error: " + e.message;
         }
-      } catch (e) {
-        document.write("⚠️ Decryption error: " + e.message);
+      } else {
+        document.getElementById("message").textContent = "🔑 No decryption key provided in URL.";
       }
-    } else {
-      document.write("🔑 No decryption key provided in URL.");
     }
   </script>
 </head>
 <body>
-  <p>Securing your destination…</p>
+  <p id="message">Securing your destination…</p>
 </body>
 </html>
