@@ -1,36 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Redirecting securely…</title>
+  <title>Secure Redirect</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</head>
+<body>
+  <p id="message">Securing your destination…</p>
   <script>
     function getQueryParam(param) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(param);
     }
 
-    window.onload = function() {
-      const encrypted = "U2FsdGVkX18Ezbqk2xvq16SsShgIOBXe70gPaWiZmPZ5Ggpg9aM5H2u+/MAO9SDPWCmNsTwdEuAJnV+BIZ376g==";
-      const passphrase = getQueryParam("key");
+    // Replace this with your own encrypted string (see Step 5)
+    const encrypted = "U2FsdGVkX1/QTkakJsalVFIjbenqbBk0zl1rpkXOYIfGrZrE6+6tdya5bAfEvVsqZ5D8jfqYuYF+u3sFHPEdUA==";
+    const passphrase = getQueryParam("key");
 
-      if (passphrase) {
-        try {
-          const decrypted = CryptoJS.AES.decrypt(encrypted, passphrase).toString(CryptoJS.enc.Utf8);
-          if (decrypted && decrypted.startsWith("http")) {
-            window.location.href = decrypted;
-          } else {
-            document.getElementById("message").textContent = "🔒 Decryption failed. Invalid key or tampered URL.";
-          }
-        } catch (e) {
-          document.getElementById("message").textContent = "⚠️ Decryption error: " + e.message;
+    if (passphrase) {
+      try {
+        const decrypted = CryptoJS.AES.decrypt(encrypted, passphrase).toString(CryptoJS.enc.Utf8);
+        if (decrypted && decrypted.startsWith("http")) {
+          window.location.href = decrypted;
+        } else {
+          document.getElementById("message").textContent = "🔒 Decryption failed. Invalid key or tampered URL.";
         }
-      } else {
-        document.getElementById("message").textContent = "🔑 No decryption key provided in URL.";
+      } catch (e) {
+        document.getElementById("message").textContent = "⚠️ Decryption error: " + e.message;
       }
+    } else {
+      document.getElementById("message").textContent = "🔑 No decryption key provided in URL.";
     }
   </script>
-</head>
-<body>
-  <p id="message">Securing your destination…</p>
 </body>
 </html>
